@@ -112,6 +112,10 @@
     @media (max-width: 420px) {
       .facts { grid-template-columns: 1fr; }
     }
+  .levels { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 12px; }
+    .lvl { padding: 10px 0; border-radius: 10px; border: 1px solid #27272a; background: transparent;
+      color: #a1a1aa; font: inherit; font-size: 0.875rem; cursor: pointer; }
+    .lvl.active { border-color: #6366f1; color: #fff; background: rgba(99,102,241,0.15); }
   </style>
 </head>
 <body>
@@ -165,6 +169,12 @@
         <div class="fact"><strong>A B C</strong><span>Choices</span></div>
       </div>
 
+      <div class="levels" id="levels">
+        <button type="button" class="lvl active" data-level="easy">Easy</button>
+        <button type="button" class="lvl" data-level="medium">Medium</button>
+        <button type="button" class="lvl" data-level="hard">Hard</button>
+        <button type="button" class="lvl" data-level="mixed">Mixed</button>
+      </div>
       <button type="button" class="btn btn-primary" id="startBtn">Start quiz</button>
     </div>
   </div>
@@ -185,8 +195,14 @@
       }
     }
 
+    let level = 'easy';
+    document.querySelectorAll('.lvl').forEach(b => b.addEventListener('click', () => {
+      level = b.dataset.level;
+      document.querySelectorAll('.lvl').forEach(x => x.classList.toggle('active', x === b));
+    }));
+
     document.getElementById('startBtn').addEventListener('click', () => {
-      window.location.href = '/quiz';
+      window.location.href = '/quiz?level=' + level;
     });
 
     document.getElementById('logoutBtn').addEventListener('click', async () => {
