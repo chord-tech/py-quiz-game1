@@ -204,6 +204,9 @@
     let timeLeft = QUIZ_SECONDS;
     let timerId = null;
     let submitting = false;
+    const params = new URLSearchParams(location.search);
+    let level = ['easy','medium','hard','mixed'].includes(params.get('level')) ? params.get('level') : 'easy';
+    const levelName = () => level.charAt(0).toUpperCase() + level.slice(1);
 
     function escapeHtml(str) {
       const d = document.createElement('div');
@@ -260,7 +263,7 @@
       }
     }
     async function loadQuestions() {
-      const res = await fetch('/api/quiz/questions', { credentials: 'same-origin' });
+      const res = await fetch('/api/quiz/questions?level=' + level, { credentials: 'same-origin' });
       if (res.status === 401) {
         document.getElementById('loading').classList.add('hidden');
         document.getElementById('authError').classList.remove('hidden');
@@ -278,7 +281,7 @@
       const answered = Object.keys(answers).length;
       document.getElementById('qNum').textContent = 'Question ' + (current + 1);
       document.getElementById('qText').textContent = q.question;
-      document.getElementById('progressLabel').textContent = 'Question ' + (current + 1) + ' of ' + questions.length;
+      document.getElementById('progressLabel').textContent = 'Question ' + (current + 1) + ' of ' + questions.length + ' · ' + levelName();
       document.getElementById('answeredCount').textContent = answered + ' answered';
       document.getElementById('progressBar').style.width = ((current + 1) / questions.length * 100) + '%';
       renderSteps();
@@ -325,7 +328,7 @@
           document.getElementById('scoreMsg').textContent = msg;
           document.getElementById('timeMsg').textContent = 'Time used: ' + formatTime(used) + ' of ' + formatTime(QUIZ_SECONDS);
           document.getElementById('resultList').innerHTML = data.results.map(r =>
-            '<div class="result-row"><span>Question ' + r.id + '</span><span class="' +
+            '<div class="result-row"><span>Question ' + r.number + '</span><span class="' +
             (r.correct ? 'tag-ok' : 'tag-no') + '">' +
             (r.correct ? 'Correct' : 'Answer ' + r.correct_answer.toUpperCase()) +
             '</span></div>'
@@ -346,12 +349,11 @@
       if (current < questions.length - 1) { current++; renderQuestion(); return; }
       await submitQuiz(false);
     });
-    document.getElementById('retryBtn').addEventListener('click', () => {
+    document.getElementById('retryBtn').addEventListener('click', async () => {
       current = 0; answers = {}; submitting = false;
       document.getElementById('resultArea').classList.add('hidden');
-      document.getElementById('quizArea').classList.remove('hidden');
       document.getElementById('nextBtn').disabled = false;
-      renderQuestion(); startTimer();
+      await loadQuestions();
     });
     document.getElementById('homeBtn').addEventListener('click', () => {
       stopTimer();

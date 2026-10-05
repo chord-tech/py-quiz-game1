@@ -14,6 +14,9 @@ import sqlite3
 import os
 from datetime import timedelta
 from functools import wraps
+import random
+
+from questions import BANK, LEVELS, QUIZ_SIZE, MIXED_SPLIT
 
 app = Flask(__name__, static_folder=".", static_url_path="")
 app.secret_key = os.environ.get("SECRET_KEY", "dev-secret-change-me-in-production")
@@ -30,68 +33,6 @@ CORS(app, supports_credentials=True)
 
 DB_PATH = "users.db"
 
-QUESTIONS = [
-    {
-        "id": 1,
-        "question": "What is the output of the following code: print(2 + 3 * 4)?",
-        "options": {"a": "20", "b": "14", "c": "24"},
-        "answer": "b",
-    },
-    {
-        "id": 2,
-        "question": "What keyword is used to create a function in Python?",
-        "options": {"a": "def", "b": "function", "c": "create"},
-        "answer": "a",
-    },
-    {
-        "id": 3,
-        "question": "Which of the following is a mutable data type in Python?",
-        "options": {"a": "tuple", "b": "list", "c": "string"},
-        "answer": "b",
-    },
-    {
-        "id": 4,
-        "question": "What is the output of the following code: print(type([]))?",
-        "options": {"a": "<class 'list'>", "b": "<class 'tuple'>", "c": "<class 'dict'>"},
-        "answer": "a",
-    },
-    {
-        "id": 5,
-        "question": "What is the output of the following code: print(10 // 3)?",
-        "options": {"a": "3.3333", "b": "3", "c": "4"},
-        "answer": "b",
-    },
-    {
-        "id": 6,
-        "question": "Which function is used to display text or output on the screen?",
-        "options": {"a": "print()", "b": "input()", "c": "len()"},
-        "answer": "a",
-    },
-    {
-        "id": 7,
-        "question": "Which loop is commonly used to iterate through a sequence?",
-        "options": {"a": "while", "b": "for", "c": "do-while"},
-        "answer": "b",
-    },
-    {
-        "id": 8,
-        "question": "Which function is used to get input from a user?",
-        "options": {"a": "print()", "b": "input()", "c": "len()"},
-        "answer": "b",
-    },
-    {
-        "id": 9,
-        "question": "What is the output of the following code: print(len('Hello, World!'))?",
-        "options": {"a": "13", "b": "12", "c": "14"},
-        "answer": "a",
-    },
-    {
-        "id": 10,
-        "question": "Which data structure stores an ordered collection of items that can be changed?",
-        "options": {"a": "tuple", "b": "list", "c": "string"},
-        "answer": "b",
-    },
-]
 
 
 def get_db():
@@ -121,6 +62,9 @@ def init_db():
             FOREIGN KEY (user_id) REFERENCES users (id)
         )
     """)
+    cols = [r["name"] for r in conn.execute("PRAGMA table_info(scores)")]
+    if "difficulty" not in cols:
+        conn.execute("ALTER TABLE scores ADD COLUMN difficulty TEXT DEFAULT 'easy'")
     conn.commit()
     conn.close()
 
@@ -343,44 +287,71 @@ def me():
     })
 
 
+def build_attempt(level):
+    """Pick 10 questions for the level, shuffle question and option order."""
+    if level == "mixed":
+        picked = []
+        for lvl, n in MIXED_SPLIT.items():
+            picked += random.sample([q for q in BANK if q["level"] == lvl], n)
+    else:
+        picked = random.sample([q for q in BANK if q["level"] == level], QUIZ_SIZE)
+    random.shuffle(picked)
+
+    client, key = [], []
+    for q in picked:
+        opts = [q["correct"]] + q["wrong"]
+        random.shuffle(opts)
+        letters = dict(zip("abc", opts))
+        correct_letter = next(k for k, v in letters.items() if v == q["correct"])
+        client.append({"id": q["id"], "question": q["question"], "options": letters})
+        key.append({"id": q["id"], "answer": correct_letter})
+    return client, key
+
+
 @app.route("/api/quiz/questions", methods=["GET"])
 @login_required
 def get_questions():
-    safe = [
-        {"id": q["id"], "question": q["question"], "options": q["options"]}
-        for q in QUESTIONS
-    ]
-    return jsonify({"success": True, "questions": safe, "total": len(safe)})
+    level = request.args.get("level", "easy").lower()
+    if level not in LEVELS:
+        level = "easy"
+    client, key = build_attempt(level)
+    session["quiz"] = {"level": level, "key": key}
+    return jsonify({"success": True, "questions": client, "total": len(client), "level": level})
 
 
 @app.route("/api/quiz/submit", methods=["POST"])
 @login_required
 def submit_quiz():
+    attempt = session.get("quiz")
+    if not attempt:
+        return jsonify({"success": False, "error": "No active quiz. Please start again."}), 400
     data = request.get_json(silent=True) or {}
     answers = data.get("answers") or {}
 
     score = 0
     results = []
-    for q in QUESTIONS:
-        qid = str(q["id"])
-        user_ans = (answers.get(qid) or "").lower().strip()
-        correct = user_ans == q["answer"]
+    for n, item in enumerate(attempt["key"], start=1):
+        user_ans = str(answers.get(str(item["id"])) or "").lower().strip()
+        correct = user_ans == item["answer"]
         if correct:
             score += 1
         results.append({
-            "id": q["id"],
+            "number": n,
+            "id": item["id"],
             "correct": correct,
             "your_answer": user_ans or None,
-            "correct_answer": q["answer"],
+            "correct_answer": item["answer"],
         })
 
-    total = len(QUESTIONS)
+    total = len(attempt["key"])
     percentage = round((score / total) * 100, 2) if total else 0
+    level = attempt["level"]
+    session.pop("quiz", None)
 
     conn = get_db()
     conn.execute(
-        "INSERT INTO scores (user_id, score, total, percentage) VALUES (?, ?, ?, ?)",
-        (session["user_id"], score, total, percentage),
+        "INSERT INTO scores (user_id, score, total, percentage, difficulty) VALUES (?, ?, ?, ?, ?)",
+        (session["user_id"], score, total, percentage, level),
     )
     conn.commit()
     conn.close()
@@ -390,6 +361,7 @@ def submit_quiz():
         "score": score,
         "total": total,
         "percentage": percentage,
+        "level": level,
         "results": results,
         "message": f"You scored {score}/{total} ({percentage}%)",
     })
@@ -400,7 +372,7 @@ def submit_quiz():
 def my_scores():
     conn = get_db()
     rows = conn.execute(
-        """SELECT score, total, percentage, created_at
+        """SELECT score, total, percentage, difficulty, created_at
            FROM scores WHERE user_id = ?
            ORDER BY created_at DESC LIMIT 10""",
         (session["user_id"],),
@@ -411,6 +383,7 @@ def my_scores():
             "score": r["score"],
             "total": r["total"],
             "percentage": r["percentage"],
+            "difficulty": r["difficulty"],
             "created_at": r["created_at"],
         }
         for r in rows
