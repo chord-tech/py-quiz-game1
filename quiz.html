@@ -27,7 +27,7 @@
       --shadow: 0 0 0 1px rgba(255,255,255,0.03), 0 8px 40px -12px rgba(0,0,0,0.55);
       --page-pad-x: 16px;
       --page-pad-y: 20px;
-      --wrap-max: 100%;
+      --wrap-width: 100%;
       --panel-pad: 20px 16px;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -47,8 +47,8 @@
     }
     .wrap {
       position: relative; z-index: 1;
-      width: 100%;
-      max-width: var(--wrap-max);
+      width: var(--wrap-width);
+      max-width: 100%;
       margin: 0 auto;
     }
     .header {
@@ -153,35 +153,27 @@
     .hidden { display: none !important; }
 
     @media (min-width: 560px) {
-      :root {
-        --page-pad-x: 28px;
-        --wrap-max: 680px;
-        --panel-pad: 28px;
-      }
+      :root { --page-pad-x: 20px; --panel-pad: 28px; }
       .header .sub { max-width: 260px; }
     }
 
+    /* Laptop and up: 90% of screen width */
     @media (min-width: 768px) {
       :root {
-        --page-pad-x: 40px;
+        --page-pad-x: 0;
         --page-pad-y: 32px;
-        --wrap-max: 760px;
+        --wrap-width: 90%;
         --panel-pad: 32px 36px;
       }
     }
 
     @media (min-width: 1024px) {
       :root {
-        --page-pad-x: 48px;
         --page-pad-y: 40px;
-        --wrap-max: 840px;
+        --wrap-width: 90%;
         --panel-pad: 36px 44px;
       }
       .choice { padding: 18px 20px; }
-    }
-
-    @media (min-width: 1280px) {
-      :root { --wrap-max: 920px; }
     }
 
     @media (max-width: 380px) {

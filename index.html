@@ -28,7 +28,7 @@
       --shadow: 0 0 0 1px rgba(255,255,255,0.03), 0 8px 40px -12px rgba(0,0,0,0.6);
       --page-pad-x: 16px;
       --page-pad-y: 24px;
-      --shell-max: 100%;
+      --shell-width: 100%;
       --panel-pad: 24px;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -51,8 +51,8 @@
     }
     .shell {
       position: relative;
-      width: 100%;
-      max-width: var(--shell-max);
+      width: var(--shell-width);
+      max-width: 100%;
       z-index: 1;
     }
     .brand { text-align: center; margin-bottom: 28px; }
@@ -152,34 +152,27 @@
     .meta { margin-top: 24px; text-align: center; font-size: 0.75rem; color: var(--text-tertiary); }
     .hidden { display: none !important; }
 
-    /* Phone keeps full width with side padding */
     @media (min-width: 480px) {
-      :root { --shell-max: 440px; --page-pad-x: 24px; }
+      :root { --page-pad-x: 24px; }
       .field input { font-size: 0.9375rem; }
     }
 
-    /* Tablet / small laptop: wider form */
+    /* Laptop and up: 90% of screen width */
     @media (min-width: 768px) {
       :root {
-        --shell-max: 520px;
-        --page-pad-x: 40px;
+        --page-pad-x: 0;
         --page-pad-y: 40px;
-        --panel-pad: 32px;
+        --shell-width: 90%;
+        --panel-pad: 36px 48px;
       }
     }
 
-    /* Laptop / desktop: comfortable wide form card */
     @media (min-width: 1024px) {
       :root {
-        --shell-max: 560px;
-        --page-pad-x: 48px;
         --page-pad-y: 48px;
-        --panel-pad: 36px 40px;
+        --shell-width: 90%;
+        --panel-pad: 40px 56px;
       }
-    }
-
-    @media (min-width: 1280px) {
-      :root { --shell-max: 600px; }
     }
 
     @media (max-width: 360px) {
