@@ -21,10 +21,6 @@
       --primary-hover: #818cf8;
       --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       --shadow: 0 0 0 1px rgba(255,255,255,0.03), 0 8px 40px -12px rgba(0,0,0,0.55);
-      --page-pad-x: 16px;
-      --page-pad-y: 24px;
-      --wrap-width: 100%;
-      --panel-pad: 24px 20px;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html, body { width: 100%; }
@@ -34,7 +30,7 @@
       min-height: 100vh;
       min-height: 100dvh;
       color: var(--text);
-      padding: var(--page-pad-y) var(--page-pad-x) 48px;
+      padding: 24px 16px 48px;
       -webkit-font-smoothing: antialiased;
     }
     .bg-mesh {
@@ -42,9 +38,9 @@
       background: radial-gradient(ellipse 70% 50% at 50% -10%, rgba(99,102,241,0.16), transparent);
     }
     .wrap {
-      position: relative; z-index: 1;
-      width: var(--wrap-width);
-      max-width: 100%;
+      position: relative;
+      z-index: 1;
+      width: 100%;
       margin: 0 auto;
     }
     .header {
@@ -80,7 +76,7 @@
     .btn-primary:hover { background: var(--primary-hover); }
     .panel {
       background: var(--surface); border: 1px solid var(--border);
-      border-radius: 16px; padding: var(--panel-pad); box-shadow: var(--shadow);
+      border-radius: 16px; padding: 24px 20px; box-shadow: var(--shadow);
     }
     .welcome {
       font-size: clamp(1.35rem, 2.5vw, 1.85rem); font-weight: 700; letter-spacing: -0.03em;
@@ -138,7 +134,6 @@
       font-size: 0.9rem;
       font-weight: 600;
       cursor: pointer;
-      transition: border-color 0.15s, background 0.15s, color 0.15s;
     }
     .lvl:hover { border-color: var(--border-strong); color: var(--text); }
     .lvl.active {
@@ -147,29 +142,27 @@
       background: rgba(99,102,241,0.15);
     }
 
-    /* Phone / small tablet: full width inside padding */
     @media (min-width: 560px) {
-      :root { --page-pad-x: 20px; --panel-pad: 28px; }
       .levels { grid-template-columns: repeat(4, 1fr); }
       .header .sub { max-width: 280px; }
+      .panel { padding: 28px; }
     }
 
-    /* Laptop and up: 90% of screen width */
-    @media (min-width: 768px) {
-      :root {
-        --page-pad-x: 0;
-        --page-pad-y: 36px;
-        --wrap-width: 90%;
-        --panel-pad: 36px 40px;
+    /* Tablet / laptop / desktop: exactly 90% of viewport width */
+    @media (min-width: 640px) {
+      body { padding: 36px 0 48px; }
+      .wrap {
+        width: 90vw !important;
+        max-width: 90vw !important;
+        margin-left: auto;
+        margin-right: auto;
       }
+      .panel { padding: 36px 40px; }
     }
 
     @media (min-width: 1024px) {
-      :root {
-        --page-pad-y: 48px;
-        --wrap-width: 90%;
-        --panel-pad: 40px 48px;
-      }
+      body { padding: 48px 0 56px; }
+      .panel { padding: 40px 48px; }
       .facts { gap: 16px; }
     }
 
