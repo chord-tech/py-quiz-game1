@@ -28,24 +28,26 @@
       --shadow: 0 0 0 1px rgba(255,255,255,0.03), 0 8px 40px -12px rgba(0,0,0,0.6);
       --page-pad-x: 16px;
       --page-pad-y: 24px;
-      --shell-max: 400px;
+      --shell-max: 100%;
       --panel-pad: 24px;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; }
     body {
       font-family: var(--font);
       background: var(--bg);
       min-height: 100vh;
       min-height: 100dvh;
       color: var(--text);
-      display: grid;
-      place-items: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       padding: var(--page-pad-y) var(--page-pad-x);
       -webkit-font-smoothing: antialiased;
     }
     .bg-mesh {
       position: fixed; inset: 0; pointer-events: none;
-      background: radial-gradient(ellipse 60% 50% at 50% -20%, rgba(99,102,241,0.2), transparent);
+      background: radial-gradient(ellipse 80% 60% at 50% -10%, rgba(99,102,241,0.18), transparent);
     }
     .shell {
       position: relative;
@@ -61,8 +63,8 @@
       margin-bottom: 16px; box-shadow: 0 4px 20px rgba(99,102,241,0.35);
     }
     .brand-mark svg { width: 24px; height: 24px; }
-    .brand h1 { font-size: clamp(1.35rem, 2.5vw, 1.65rem); font-weight: 700; letter-spacing: -0.04em; }
-    .brand p { margin-top: 8px; font-size: 0.875rem; color: var(--text-secondary); line-height: 1.45; }
+    .brand h1 { font-size: clamp(1.4rem, 2.5vw, 1.75rem); font-weight: 700; letter-spacing: -0.04em; }
+    .brand p { margin-top: 8px; font-size: 0.9375rem; color: var(--text-secondary); line-height: 1.45; }
     .panel {
       background: var(--surface); border: 1px solid var(--border);
       border-radius: 16px; padding: var(--panel-pad); box-shadow: var(--shadow);
@@ -75,7 +77,7 @@
     .segment button {
       appearance: none; border: none; background: transparent;
       color: var(--text-secondary); font-family: var(--font);
-      font-size: 0.8125rem; font-weight: 600; padding: 10px 12px;
+      font-size: 0.875rem; font-weight: 600; padding: 12px 14px;
       border-radius: 7px; cursor: pointer;
     }
     .segment button[aria-selected="true"] {
@@ -89,7 +91,7 @@
     }
     .input-wrap { position: relative; }
     .field input {
-      width: 100%; height: 44px; padding: 0 14px; padding-right: 44px;
+      width: 100%; height: 48px; padding: 0 14px; padding-right: 44px;
       background: var(--bg); border: 1px solid var(--border); border-radius: 10px;
       color: var(--text); font-family: var(--font); font-size: 16px;
     }
@@ -101,7 +103,7 @@
     .field input.is-invalid { border-color: var(--error); }
     .eye {
       position: absolute; right: 6px; top: 50%; transform: translateY(-50%);
-      width: 32px; height: 32px; display: grid; place-items: center;
+      width: 36px; height: 36px; display: grid; place-items: center;
       border: none; background: transparent; color: var(--text-tertiary);
       cursor: pointer; border-radius: 6px;
     }
@@ -150,28 +152,36 @@
     .meta { margin-top: 24px; text-align: center; font-size: 0.75rem; color: var(--text-tertiary); }
     .hidden { display: none !important; }
 
-    /* Tablet */
-    @media (min-width: 640px) {
-      :root {
-        --page-pad-x: 24px;
-        --page-pad-y: 40px;
-        --shell-max: 440px;
-        --panel-pad: 28px 28px;
-      }
+    /* Phone keeps full width with side padding */
+    @media (min-width: 480px) {
+      :root { --shell-max: 440px; --page-pad-x: 24px; }
       .field input { font-size: 0.9375rem; }
     }
 
-    /* Desktop */
-    @media (min-width: 960px) {
+    /* Tablet / small laptop: wider form */
+    @media (min-width: 768px) {
       :root {
-        --page-pad-x: 32px;
-        --page-pad-y: 48px;
-        --shell-max: 460px;
+        --shell-max: 520px;
+        --page-pad-x: 40px;
+        --page-pad-y: 40px;
+        --panel-pad: 32px;
       }
-      .brand { margin-bottom: 32px; }
     }
 
-    /* Very small phones */
+    /* Laptop / desktop: comfortable wide form card */
+    @media (min-width: 1024px) {
+      :root {
+        --shell-max: 560px;
+        --page-pad-x: 48px;
+        --page-pad-y: 48px;
+        --panel-pad: 36px 40px;
+      }
+    }
+
+    @media (min-width: 1280px) {
+      :root { --shell-max: 600px; }
+    }
+
     @media (max-width: 360px) {
       :root { --panel-pad: 20px 16px; --page-pad-x: 12px; }
       .segment button { font-size: 0.75rem; padding: 10px 8px; }

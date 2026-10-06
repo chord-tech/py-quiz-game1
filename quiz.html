@@ -27,10 +27,11 @@
       --shadow: 0 0 0 1px rgba(255,255,255,0.03), 0 8px 40px -12px rgba(0,0,0,0.55);
       --page-pad-x: 16px;
       --page-pad-y: 20px;
-      --wrap-max: 560px;
+      --wrap-max: 100%;
       --panel-pad: 20px 16px;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; }
     body {
       font-family: var(--font);
       background: var(--bg);
@@ -42,7 +43,7 @@
     }
     .bg-mesh {
       position: fixed; inset: 0; pointer-events: none;
-      background: radial-gradient(ellipse 50% 40% at 50% -15%, rgba(99,102,241,0.16), transparent);
+      background: radial-gradient(ellipse 70% 45% at 50% -10%, rgba(99,102,241,0.14), transparent);
     }
     .wrap {
       position: relative; z-index: 1;
@@ -56,28 +57,28 @@
     }
     .header-left { display: flex; align-items: center; gap: 12px; min-width: 0; }
     .mark {
-      width: 36px; height: 36px; border-radius: 10px;
+      width: 40px; height: 40px; border-radius: 10px;
       background: linear-gradient(145deg, #6366f1, #4f46e5);
       display: grid; place-items: center; flex-shrink: 0;
     }
-    .mark svg { width: 18px; height: 18px; }
-    .header h1 { font-size: 0.9375rem; font-weight: 600; letter-spacing: -0.02em; }
+    .mark svg { width: 20px; height: 20px; }
+    .header h1 { font-size: 1rem; font-weight: 600; letter-spacing: -0.02em; }
     .header .sub {
-      font-size: 0.75rem; color: var(--text-tertiary); margin-top: 2px;
-      overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 140px;
+      font-size: 0.8125rem; color: var(--text-tertiary); margin-top: 2px;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 180px;
     }
-    .header-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .header-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
     .timer {
-      font-variant-numeric: tabular-nums; font-size: 0.8125rem; font-weight: 600;
-      padding: 8px 12px; border-radius: 8px; background: var(--surface-2);
-      border: 1px solid var(--border); min-width: 58px; text-align: center;
+      font-variant-numeric: tabular-nums; font-size: 0.875rem; font-weight: 600;
+      padding: 10px 14px; border-radius: 8px; background: var(--surface-2);
+      border: 1px solid var(--border); min-width: 64px; text-align: center;
     }
     .timer.warn { color: var(--warning); border-color: rgba(234,179,8,0.4); }
     .timer.danger { color: var(--error); border-color: rgba(239,68,68,0.45); animation: blink 0.7s ease infinite; }
     @keyframes blink { 50% { opacity: 0.7; } }
     .btn {
-      height: 36px; padding: 0 14px; border-radius: 8px; font-family: var(--font);
-      font-size: 0.8125rem; font-weight: 600; cursor: pointer; border: 1px solid transparent;
+      height: 40px; padding: 0 16px; border-radius: 8px; font-family: var(--font);
+      font-size: 0.875rem; font-weight: 600; cursor: pointer; border: 1px solid transparent;
     }
     .btn-ghost { background: transparent; border-color: var(--border); color: var(--text-secondary); }
     .btn-ghost:hover:not(:disabled) { color: var(--text); border-color: var(--border-strong); background: var(--surface-2); }
@@ -91,92 +92,96 @@
     .progress-block { margin-bottom: 16px; }
     .progress-row {
       display: flex; justify-content: space-between; gap: 8px; margin-bottom: 8px;
-      font-size: 0.75rem; font-weight: 500; color: var(--text-tertiary); flex-wrap: wrap;
+      font-size: 0.8125rem; font-weight: 500; color: var(--text-tertiary); flex-wrap: wrap;
     }
-    .track { height: 4px; background: var(--surface-2); border-radius: 2px; overflow: hidden; }
+    .track { height: 5px; background: var(--surface-2); border-radius: 3px; overflow: hidden; }
     .track > div { height: 100%; width: 0%; background: var(--primary); transition: width 0.3s ease; }
-    .steps { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; margin-bottom: 16px; }
-    .step { width: 8px; height: 8px; border-radius: 50%; background: var(--border-strong); }
+    .steps { display: flex; gap: 7px; justify-content: center; flex-wrap: wrap; margin-bottom: 16px; }
+    .step { width: 9px; height: 9px; border-radius: 50%; background: var(--border-strong); }
     .step.done { background: var(--primary); }
     .step.active { background: var(--text); transform: scale(1.35); box-shadow: 0 0 0 3px var(--primary-muted); }
     .q-label {
-      font-size: 0.6875rem; font-weight: 600; text-transform: uppercase;
+      font-size: 0.75rem; font-weight: 600; text-transform: uppercase;
       letter-spacing: 0.08em; color: var(--primary); margin-bottom: 10px;
     }
     .q-title {
-      font-size: clamp(1.05rem, 2.5vw, 1.2rem); font-weight: 600; letter-spacing: -0.025em;
-      line-height: 1.45; margin-bottom: 20px; word-break: break-word;
+      font-size: clamp(1.1rem, 2.2vw, 1.35rem); font-weight: 600; letter-spacing: -0.025em;
+      line-height: 1.45; margin-bottom: 22px; word-break: break-word;
     }
-    .choices { display: flex; flex-direction: column; gap: 8px; }
+    .choices { display: flex; flex-direction: column; gap: 10px; }
     .choice {
-      display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px;
+      display: flex; align-items: flex-start; gap: 14px; padding: 16px 18px;
       background: var(--bg); border: 1px solid var(--border); border-radius: 12px; cursor: pointer;
-      min-height: 52px;
+      min-height: 56px;
     }
     .choice:hover { border-color: var(--border-strong); background: var(--surface-2); }
     .choice.selected { border-color: var(--primary); background: var(--primary-muted); box-shadow: 0 0 0 1px var(--primary); }
     .choice input { display: none; }
     .choice .key {
-      width: 28px; height: 28px; border-radius: 8px; background: var(--surface-2);
+      width: 30px; height: 30px; border-radius: 8px; background: var(--surface-2);
       border: 1px solid var(--border); display: grid; place-items: center;
-      font-size: 0.75rem; font-weight: 700; color: var(--text-secondary); flex-shrink: 0;
+      font-size: 0.8rem; font-weight: 700; color: var(--text-secondary); flex-shrink: 0;
     }
     .choice.selected .key { background: var(--primary); border-color: var(--primary); color: white; }
-    .choice .label { font-size: 0.9375rem; line-height: 1.45; padding-top: 3px; word-break: break-word; }
+    .choice .label { font-size: 1rem; line-height: 1.45; padding-top: 3px; word-break: break-word; }
     .actions {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-top: 24px;
+      gap: 12px;
+      margin-top: 28px;
     }
-    .actions .btn { height: 48px; width: 100%; }
-    .result-hero { text-align: center; padding: 8px 0 20px; border-bottom: 1px solid var(--border); margin-bottom: 8px; }
+    .actions .btn { height: 52px; width: 100%; font-size: 0.9375rem; }
+    .result-hero { text-align: center; padding: 12px 0 24px; border-bottom: 1px solid var(--border); margin-bottom: 8px; }
     .result-ring {
-      width: 88px; height: 88px; margin: 0 auto 16px; border-radius: 50%;
+      width: 100px; height: 100px; margin: 0 auto 16px; border-radius: 50%;
       background: conic-gradient(var(--primary) var(--pct, 0%), var(--border) 0);
       display: grid; place-items: center; position: relative;
     }
-    .result-ring::before { content: ''; position: absolute; inset: 6px; border-radius: 50%; background: var(--surface); }
-    .result-ring span { position: relative; font-size: 1.25rem; font-weight: 700; }
-    .result-hero h2 { font-size: clamp(1.25rem, 3vw, 1.5rem); font-weight: 700; letter-spacing: -0.03em; }
-    .result-hero p { margin-top: 6px; font-size: 0.875rem; color: var(--text-secondary); }
+    .result-ring::before { content: ''; position: absolute; inset: 7px; border-radius: 50%; background: var(--surface); }
+    .result-ring span { position: relative; font-size: 1.35rem; font-weight: 700; }
+    .result-hero h2 { font-size: clamp(1.35rem, 2.5vw, 1.65rem); font-weight: 700; letter-spacing: -0.03em; }
+    .result-hero p { margin-top: 8px; font-size: 0.9375rem; color: var(--text-secondary); }
     .result-row {
       display: flex; justify-content: space-between; align-items: center; gap: 12px;
-      padding: 12px 4px; border-bottom: 1px solid var(--border); font-size: 0.875rem;
+      padding: 14px 4px; border-bottom: 1px solid var(--border); font-size: 0.9375rem;
     }
     .result-row:last-child { border-bottom: none; }
-    .tag-ok { color: var(--success); font-weight: 600; font-size: 0.8125rem; flex-shrink: 0; }
-    .tag-no { color: var(--error); font-weight: 600; font-size: 0.8125rem; flex-shrink: 0; }
-    .state { text-align: center; padding: 48px 24px; color: var(--text-secondary); font-size: 0.875rem; }
+    .tag-ok { color: var(--success); font-weight: 600; font-size: 0.875rem; flex-shrink: 0; }
+    .tag-no { color: var(--error); font-weight: 600; font-size: 0.875rem; flex-shrink: 0; }
+    .state { text-align: center; padding: 48px 24px; color: var(--text-secondary); font-size: 0.9375rem; }
     .state a { color: var(--primary); font-weight: 600; text-decoration: none; }
     .hidden { display: none !important; }
 
     @media (min-width: 560px) {
       :root {
-        --page-pad-x: 24px;
-        --page-pad-y: 28px;
-        --wrap-max: 600px;
-        --panel-pad: 24px;
+        --page-pad-x: 28px;
+        --wrap-max: 680px;
+        --panel-pad: 28px;
       }
-      .header .sub { max-width: 220px; }
+      .header .sub { max-width: 260px; }
     }
 
     @media (min-width: 768px) {
       :root {
-        --page-pad-x: 32px;
-        --page-pad-y: 36px;
-        --wrap-max: 640px;
-        --panel-pad: 28px;
+        --page-pad-x: 40px;
+        --page-pad-y: 32px;
+        --wrap-max: 760px;
+        --panel-pad: 32px 36px;
       }
-      .choice { padding: 16px 18px; }
-      .choice .label { font-size: 1rem; }
     }
 
     @media (min-width: 1024px) {
       :root {
-        --wrap-max: 680px;
-        --page-pad-y: 48px;
+        --page-pad-x: 48px;
+        --page-pad-y: 40px;
+        --wrap-max: 840px;
+        --panel-pad: 36px 44px;
       }
+      .choice { padding: 18px 20px; }
+    }
+
+    @media (min-width: 1280px) {
+      :root { --wrap-max: 920px; }
     }
 
     @media (max-width: 380px) {
