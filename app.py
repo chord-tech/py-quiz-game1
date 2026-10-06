@@ -25,13 +25,13 @@ app.config.update(
     SESSION_COOKIE_NAME="pyquiz_session",
     SESSION_COOKIE_HTTPONLY=True,
     SESSION_COOKIE_SAMESITE="Lax",
-    SESSION_COOKIE_SECURE=False,
+    SESSION_COOKIE_SECURE=os.environ.get("COOKIE_SECURE", "0") == "1",
     PERMANENT_SESSION_LIFETIME=timedelta(days=7),
 )
 
 CORS(app, supports_credentials=True)
 
-DB_PATH = "users.db"
+DB_PATH = os.environ.get("DB_PATH", "users.db")
 
 
 
@@ -391,7 +391,9 @@ def my_scores():
     return jsonify({"success": True, "scores": scores})
 
 
+# Create tables on import so this also runs under gunicorn in production
+init_db()
+
 if __name__ == "__main__":
-    init_db()
     print("Database ready. Open http://127.0.0.1:5000")
-    app.run(debug=True, port=5000)
+    app.run(debug=os.environ.get("FLASK_DEBUG", "1") == "1", port=5000)
