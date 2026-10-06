@@ -2,6 +2,12 @@
 
 An interactive **Python basics quiz** with account registration, login, difficulty levels, a timed challenge, shuffled questions, responsive UI, and saved scores.
 
+## Live demo
+
+**Play here:** [https://py-quiz-game.onrender.com](https://py-quiz-game.onrender.com)
+
+> Free Render tier may take a few seconds to wake up if the app was idle.
+
 ## Features
 
 - **Create account / Sign in** with live username & password validation
@@ -15,7 +21,7 @@ An interactive **Python basics quiz** with account registration, login, difficul
 - **Responsive layout** — works on phone, tablet, and laptop (about **90% width** on larger screens)
 - **Passwords hashed** and stored in **SQLite**
 - Scores saved per user (including difficulty)
-- **Deploy-ready** for [Render](https://render.com) (Gunicorn + `render.yaml`)
+- **Deployed on** [Render](https://render.com) (Gunicorn + `render.yaml`)
 
 ## How to run (local)
 
@@ -104,6 +110,8 @@ py-quiz-game1/
 3. Score, total, percentage, and **difficulty** are saved in SQLite.
 
 ## Deploy on Render
+
+**Live URL:** [https://py-quiz-game.onrender.com](https://py-quiz-game.onrender.com)
 
 This repo includes a **`render.yaml`** for a free web service:
 
