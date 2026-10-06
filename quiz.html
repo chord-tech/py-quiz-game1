@@ -9,48 +9,27 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg: #09090b;
-      --surface: #111113;
-      --surface-2: #18181b;
-      --border: #27272a;
-      --border-strong: #3f3f46;
-      --text: #fafafa;
-      --text-secondary: #a1a1aa;
-      --text-tertiary: #71717a;
-      --primary: #6366f1;
-      --primary-hover: #818cf8;
+      --bg: #09090b; --surface: #111113; --surface-2: #18181b;
+      --border: #27272a; --border-strong: #3f3f46;
+      --text: #fafafa; --text-secondary: #a1a1aa; --text-tertiary: #71717a;
+      --primary: #6366f1; --primary-hover: #818cf8;
       --primary-muted: rgba(99, 102, 241, 0.15);
-      --success: #22c55e;
-      --error: #ef4444;
-      --warning: #eab308;
+      --success: #22c55e; --error: #ef4444; --warning: #eab308;
       --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       --shadow: 0 0 0 1px rgba(255,255,255,0.03), 0 8px 40px -12px rgba(0,0,0,0.55);
-      --page-pad-x: 16px;
-      --page-pad-y: 20px;
-      --wrap-width: 100%;
-      --panel-pad: 20px 16px;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html, body { width: 100%; }
     body {
-      font-family: var(--font);
-      background: var(--bg);
-      min-height: 100vh;
-      min-height: 100dvh;
-      color: var(--text);
-      padding: var(--page-pad-y) var(--page-pad-x) 48px;
-      -webkit-font-smoothing: antialiased;
+      font-family: var(--font); background: var(--bg);
+      min-height: 100vh; min-height: 100dvh; color: var(--text);
+      padding: 20px 16px 48px; -webkit-font-smoothing: antialiased;
     }
     .bg-mesh {
       position: fixed; inset: 0; pointer-events: none;
       background: radial-gradient(ellipse 70% 45% at 50% -10%, rgba(99,102,241,0.14), transparent);
     }
-    .wrap {
-      position: relative; z-index: 1;
-      width: var(--wrap-width);
-      max-width: 100%;
-      margin: 0 auto;
-    }
+    .wrap { position: relative; z-index: 1; width: 100%; margin: 0 auto; }
     .header {
       display: flex; align-items: center; justify-content: space-between;
       gap: 12px; margin-bottom: 24px; flex-wrap: wrap;
@@ -87,7 +66,7 @@
     .btn:disabled { opacity: 0.4; cursor: not-allowed; }
     .panel {
       background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
-      padding: var(--panel-pad); box-shadow: var(--shadow);
+      padding: 20px 16px; box-shadow: var(--shadow);
     }
     .progress-block { margin-bottom: 16px; }
     .progress-row {
@@ -124,12 +103,7 @@
     }
     .choice.selected .key { background: var(--primary); border-color: var(--primary); color: white; }
     .choice .label { font-size: 1rem; line-height: 1.45; padding-top: 3px; word-break: break-word; }
-    .actions {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-top: 28px;
-    }
+    .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 28px; }
     .actions .btn { height: 52px; width: 100%; font-size: 0.9375rem; }
     .result-hero { text-align: center; padding: 12px 0 24px; border-bottom: 1px solid var(--border); margin-bottom: 8px; }
     .result-ring {
@@ -153,26 +127,25 @@
     .hidden { display: none !important; }
 
     @media (min-width: 560px) {
-      :root { --page-pad-x: 20px; --panel-pad: 28px; }
       .header .sub { max-width: 260px; }
+      .panel { padding: 28px; }
     }
 
-    /* Laptop and up: 90% of screen width */
-    @media (min-width: 768px) {
-      :root {
-        --page-pad-x: 0;
-        --page-pad-y: 32px;
-        --wrap-width: 90%;
-        --panel-pad: 32px 36px;
+    /* 90% of laptop/desktop viewport */
+    @media (min-width: 640px) {
+      body { padding: 32px 0 48px; }
+      .wrap {
+        width: 90vw !important;
+        max-width: 90vw !important;
+        margin-left: auto;
+        margin-right: auto;
       }
+      .panel { padding: 32px 36px; }
     }
 
     @media (min-width: 1024px) {
-      :root {
-        --page-pad-y: 40px;
-        --wrap-width: 90%;
-        --panel-pad: 36px 44px;
-      }
+      body { padding: 40px 0 56px; }
+      .panel { padding: 36px 44px; }
       .choice { padding: 18px 20px; }
     }
 
@@ -252,24 +225,12 @@
 
   <script>
     const QUIZ_SECONDS = 5 * 60;
-    let questions = [];
-    let current = 0;
-    let answers = {};
-    let timeLeft = QUIZ_SECONDS;
-    let timerId = null;
-    let submitting = false;
+    let questions = [], current = 0, answers = {}, timeLeft = QUIZ_SECONDS, timerId = null, submitting = false;
     const params = new URLSearchParams(location.search);
     let level = ['easy','medium','hard','mixed'].includes(params.get('level')) ? params.get('level') : 'easy';
     const levelName = () => level.charAt(0).toUpperCase() + level.slice(1);
-
-    function escapeHtml(str) {
-      const d = document.createElement('div');
-      d.textContent = str;
-      return d.innerHTML;
-    }
-    function formatTime(secs) {
-      return Math.floor(secs / 60) + ':' + String(secs % 60).padStart(2, '0');
-    }
+    function escapeHtml(str) { const d = document.createElement('div'); d.textContent = str; return d.innerHTML; }
+    function formatTime(secs) { return Math.floor(secs / 60) + ':' + String(secs % 60).padStart(2, '0'); }
     function updateTimerDisplay() {
       const el = document.getElementById('timer');
       el.textContent = formatTime(timeLeft);
@@ -278,19 +239,12 @@
       else if (timeLeft <= 60) el.classList.add('warn');
     }
     function startTimer() {
-      stopTimer();
-      timeLeft = QUIZ_SECONDS;
+      stopTimer(); timeLeft = QUIZ_SECONDS;
       document.getElementById('timer').classList.remove('hidden');
       updateTimerDisplay();
-      timerId = setInterval(() => {
-        timeLeft--;
-        updateTimerDisplay();
-        if (timeLeft <= 0) { stopTimer(); submitQuiz(true); }
-      }, 1000);
+      timerId = setInterval(() => { timeLeft--; updateTimerDisplay(); if (timeLeft <= 0) { stopTimer(); submitQuiz(true); } }, 1000);
     }
-    function stopTimer() {
-      if (timerId) { clearInterval(timerId); timerId = null; }
-    }
+    function stopTimer() { if (timerId) { clearInterval(timerId); timerId = null; } }
     function renderSteps() {
       document.getElementById('steps').innerHTML = questions.map((q, i) => {
         let cls = 'step';
@@ -327,8 +281,7 @@
       questions = data.questions;
       document.getElementById('loading').classList.add('hidden');
       document.getElementById('quizArea').classList.remove('hidden');
-      renderQuestion();
-      startTimer();
+      renderQuestion(); startTimer();
     }
     function renderQuestion() {
       const q = questions[current];
@@ -356,16 +309,14 @@
     }
     async function submitQuiz(fromTimeout) {
       if (submitting) return;
-      submitting = true;
-      stopTimer();
+      submitting = true; stopTimer();
       const nextBtn = document.getElementById('nextBtn');
       nextBtn.disabled = true;
       nextBtn.textContent = fromTimeout ? 'Time up…' : 'Submitting…';
       const used = QUIZ_SECONDS - Math.max(0, timeLeft);
       try {
         const res = await fetch('/api/quiz/submit', {
-          method: 'POST',
-          credentials: 'same-origin',
+          method: 'POST', credentials: 'same-origin',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ answers })
         });
@@ -396,9 +347,7 @@
         nextBtn.disabled = false; nextBtn.textContent = 'Submit'; submitting = false;
       }
     }
-    document.getElementById('prevBtn').addEventListener('click', () => {
-      if (current > 0) { current--; renderQuestion(); }
-    });
+    document.getElementById('prevBtn').addEventListener('click', () => { if (current > 0) { current--; renderQuestion(); } });
     document.getElementById('nextBtn').addEventListener('click', async () => {
       if (current < questions.length - 1) { current++; renderQuestion(); return; }
       await submitQuiz(false);
@@ -409,10 +358,7 @@
       document.getElementById('nextBtn').disabled = false;
       await loadQuestions();
     });
-    document.getElementById('homeBtn').addEventListener('click', () => {
-      stopTimer();
-      window.location.href = '/home';
-    });
+    document.getElementById('homeBtn').addEventListener('click', () => { stopTimer(); window.location.href = '/home'; });
     document.getElementById('logoutBtn').addEventListener('click', async () => {
       stopTimer();
       await fetch('/api/logout', { method: 'POST', credentials: 'same-origin' });
