@@ -26,24 +26,34 @@
       --ring: rgba(99, 102, 241, 0.4);
       --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       --shadow: 0 0 0 1px rgba(255,255,255,0.03), 0 8px 40px -12px rgba(0,0,0,0.6);
+      --page-pad-x: 16px;
+      --page-pad-y: 24px;
+      --shell-max: 400px;
+      --panel-pad: 24px;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: var(--font);
       background: var(--bg);
       min-height: 100vh;
+      min-height: 100dvh;
       color: var(--text);
       display: grid;
       place-items: center;
-      padding: 24px 16px;
+      padding: var(--page-pad-y) var(--page-pad-x);
       -webkit-font-smoothing: antialiased;
     }
     .bg-mesh {
       position: fixed; inset: 0; pointer-events: none;
       background: radial-gradient(ellipse 60% 50% at 50% -20%, rgba(99,102,241,0.2), transparent);
     }
-    .shell { position: relative; width: 100%; max-width: 400px; z-index: 1; }
-    .brand { text-align: center; margin-bottom: 32px; }
+    .shell {
+      position: relative;
+      width: 100%;
+      max-width: var(--shell-max);
+      z-index: 1;
+    }
+    .brand { text-align: center; margin-bottom: 28px; }
     .brand-mark {
       display: inline-flex; align-items: center; justify-content: center;
       width: 48px; height: 48px; border-radius: 14px;
@@ -51,11 +61,11 @@
       margin-bottom: 16px; box-shadow: 0 4px 20px rgba(99,102,241,0.35);
     }
     .brand-mark svg { width: 24px; height: 24px; }
-    .brand h1 { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.04em; }
-    .brand p { margin-top: 8px; font-size: 0.875rem; color: var(--text-secondary); }
+    .brand h1 { font-size: clamp(1.35rem, 2.5vw, 1.65rem); font-weight: 700; letter-spacing: -0.04em; }
+    .brand p { margin-top: 8px; font-size: 0.875rem; color: var(--text-secondary); line-height: 1.45; }
     .panel {
       background: var(--surface); border: 1px solid var(--border);
-      border-radius: 16px; padding: 28px 24px; box-shadow: var(--shadow);
+      border-radius: 16px; padding: var(--panel-pad); box-shadow: var(--shadow);
     }
     .segment {
       display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px;
@@ -81,7 +91,7 @@
     .field input {
       width: 100%; height: 44px; padding: 0 14px; padding-right: 44px;
       background: var(--bg); border: 1px solid var(--border); border-radius: 10px;
-      color: var(--text); font-family: var(--font); font-size: 0.9375rem;
+      color: var(--text); font-family: var(--font); font-size: 16px;
     }
     .field input:focus {
       outline: none; border-color: var(--primary);
@@ -120,9 +130,9 @@
       background: var(--success-muted); border-color: var(--success); color: var(--success);
     }
     .submit {
-      width: 100%; height: 44px; margin-top: 8px; border: none; border-radius: 10px;
+      width: 100%; height: 48px; margin-top: 8px; border: none; border-radius: 10px;
       background: var(--primary); color: white; font-family: var(--font);
-      font-size: 0.875rem; font-weight: 600; cursor: pointer;
+      font-size: 0.9375rem; font-weight: 600; cursor: pointer;
     }
     .submit:hover:not(:disabled) { background: var(--primary-hover); }
     .submit:disabled { opacity: 0.4; cursor: not-allowed; }
@@ -139,6 +149,33 @@
     }
     .meta { margin-top: 24px; text-align: center; font-size: 0.75rem; color: var(--text-tertiary); }
     .hidden { display: none !important; }
+
+    /* Tablet */
+    @media (min-width: 640px) {
+      :root {
+        --page-pad-x: 24px;
+        --page-pad-y: 40px;
+        --shell-max: 440px;
+        --panel-pad: 28px 28px;
+      }
+      .field input { font-size: 0.9375rem; }
+    }
+
+    /* Desktop */
+    @media (min-width: 960px) {
+      :root {
+        --page-pad-x: 32px;
+        --page-pad-y: 48px;
+        --shell-max: 460px;
+      }
+      .brand { margin-bottom: 32px; }
+    }
+
+    /* Very small phones */
+    @media (max-width: 360px) {
+      :root { --panel-pad: 20px 16px; --page-pad-x: 12px; }
+      .segment button { font-size: 0.75rem; padding: 10px 8px; }
+    }
   </style>
 </head>
 <body>
@@ -161,7 +198,6 @@
         <button type="button" role="tab" data-mode="login" aria-selected="false">Sign in</button>
       </div>
 
-      <!-- Real form POST → server redirects to /quiz -->
       <form id="validatorForm" method="post" action="/auth/register" novalidate>
         <div class="field">
           <label for="username">Username</label>
@@ -223,7 +259,6 @@
     const banner = document.getElementById('banner');
     let mode = 'register';
 
-    // Show flash errors from server (e.g. wrong password)
     fetch('/api/flash').then(r => r.json()).then(data => {
       const msg = (data.messages || [])[0];
       if (msg) {
@@ -336,7 +371,6 @@
       });
     });
 
-    // Allow normal form submit only when valid — browser navigates to /quiz via server redirect
     form.addEventListener('submit', (e) => {
       checkAll();
       if (submitBtn.disabled) {
@@ -346,7 +380,6 @@
         return;
       }
       submitBtn.textContent = mode === 'register' ? 'Creating…' : 'Signing in…';
-      // do NOT preventDefault — form POSTs to /auth/login or /auth/register
     });
   </script>
 </body>

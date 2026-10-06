@@ -21,14 +21,19 @@
       --primary-hover: #818cf8;
       --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       --shadow: 0 0 0 1px rgba(255,255,255,0.03), 0 8px 40px -12px rgba(0,0,0,0.55);
+      --page-pad-x: 16px;
+      --page-pad-y: 24px;
+      --wrap-max: 520px;
+      --panel-pad: 24px 20px;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: var(--font);
       background: var(--bg);
       min-height: 100vh;
+      min-height: 100dvh;
       color: var(--text);
-      padding: 24px 16px 48px;
+      padding: var(--page-pad-y) var(--page-pad-x) 48px;
       -webkit-font-smoothing: antialiased;
     }
     .bg-mesh {
@@ -37,26 +42,31 @@
     }
     .wrap {
       position: relative; z-index: 1;
-      max-width: 520px; margin: 0 auto;
+      width: 100%;
+      max-width: var(--wrap-max);
+      margin: 0 auto;
     }
     .header {
       display: flex; align-items: center; justify-content: space-between;
-      gap: 12px; margin-bottom: 28px; flex-wrap: wrap;
+      gap: 12px; margin-bottom: 24px; flex-wrap: wrap;
     }
-    .header-left { display: flex; align-items: center; gap: 12px; }
+    .header-left { display: flex; align-items: center; gap: 12px; min-width: 0; }
     .mark {
       width: 36px; height: 36px; border-radius: 10px;
       background: linear-gradient(145deg, #6366f1, #4f46e5);
-      display: grid; place-items: center;
+      display: grid; place-items: center; flex-shrink: 0;
       box-shadow: 0 2px 12px rgba(99,102,241,0.3);
     }
     .mark svg { width: 18px; height: 18px; }
     .header h1 { font-size: 0.9375rem; font-weight: 600; letter-spacing: -0.02em; }
-    .header .sub { font-size: 0.75rem; color: var(--text-tertiary); margin-top: 2px; }
+    .header .sub {
+      font-size: 0.75rem; color: var(--text-tertiary); margin-top: 2px;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 160px;
+    }
     .btn {
       height: 36px; padding: 0 14px; border-radius: 8px;
       font-family: var(--font); font-size: 0.8125rem; font-weight: 600;
-      cursor: pointer; border: 1px solid transparent;
+      cursor: pointer; border: 1px solid transparent; flex-shrink: 0;
     }
     .btn-ghost {
       background: transparent; border-color: var(--border); color: var(--text-secondary);
@@ -69,11 +79,11 @@
     .btn-primary:hover { background: var(--primary-hover); }
     .panel {
       background: var(--surface); border: 1px solid var(--border);
-      border-radius: 16px; padding: 28px 24px; box-shadow: var(--shadow);
+      border-radius: 16px; padding: var(--panel-pad); box-shadow: var(--shadow);
     }
     .welcome {
-      font-size: 1.5rem; font-weight: 700; letter-spacing: -0.03em;
-      margin-bottom: 8px;
+      font-size: clamp(1.25rem, 3vw, 1.6rem); font-weight: 700; letter-spacing: -0.03em;
+      margin-bottom: 8px; word-break: break-word;
     }
     .welcome span { color: var(--primary); }
     .lede {
@@ -84,9 +94,9 @@
       font-size: 0.6875rem; font-weight: 600; text-transform: uppercase;
       letter-spacing: 0.07em; color: var(--text-tertiary); margin-bottom: 12px;
     }
-    .steps { list-style: none; margin-bottom: 28px; }
+    .steps { list-style: none; margin-bottom: 24px; }
     .steps li {
-      display: flex; gap: 14px; margin-bottom: 14px;
+      display: flex; gap: 12px; margin-bottom: 14px;
       font-size: 0.9rem; line-height: 1.45; color: var(--text-secondary);
     }
     .steps li:last-child { margin-bottom: 0; }
@@ -97,25 +107,80 @@
       font-size: 0.75rem; font-weight: 700; color: var(--primary);
     }
     .facts {
-      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;
-      margin-bottom: 28px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 24px;
     }
     .fact {
       background: var(--bg); border: 1px solid var(--border);
-      border-radius: 12px; padding: 14px 12px; text-align: center;
+      border-radius: 12px; padding: 14px 10px; text-align: center;
     }
     .fact strong {
       display: block; font-size: 1.125rem; font-weight: 700;
       letter-spacing: -0.02em; margin-bottom: 4px;
     }
     .fact span { font-size: 0.75rem; color: var(--text-tertiary); }
-    @media (max-width: 420px) {
+
+    .levels {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .lvl {
+      padding: 12px 8px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-secondary);
+      font: inherit;
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s, color 0.15s;
+    }
+    .lvl:hover { border-color: var(--border-strong); color: var(--text); }
+    .lvl.active {
+      border-color: var(--primary);
+      color: #fff;
+      background: rgba(99,102,241,0.15);
+    }
+
+    /* Tablet and up: wider layout, 4 difficulty buttons in a row */
+    @media (min-width: 560px) {
+      :root {
+        --page-pad-x: 24px;
+        --page-pad-y: 32px;
+        --wrap-max: 560px;
+        --panel-pad: 28px 28px;
+      }
+      .levels { grid-template-columns: repeat(4, 1fr); }
+      .header .sub { max-width: 240px; }
+    }
+
+    @media (min-width: 768px) {
+      :root {
+        --page-pad-x: 32px;
+        --page-pad-y: 40px;
+        --wrap-max: 600px;
+        --panel-pad: 32px;
+      }
+      .facts { gap: 12px; }
+      .fact { padding: 16px 12px; }
+    }
+
+    @media (min-width: 1024px) {
+      :root {
+        --wrap-max: 640px;
+        --page-pad-y: 48px;
+      }
+    }
+
+    /* Very narrow: stack fact cards */
+    @media (max-width: 380px) {
       .facts { grid-template-columns: 1fr; }
     }
-  .levels { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 12px; }
-    .lvl { padding: 10px 0; border-radius: 10px; border: 1px solid #27272a; background: transparent;
-      color: #a1a1aa; font: inherit; font-size: 0.875rem; cursor: pointer; }
-    .lvl.active { border-color: #6366f1; color: #fff; background: rgba(99,102,241,0.15); }
   </style>
 </head>
 <body>
@@ -169,6 +234,7 @@
         <div class="fact"><strong>A B C</strong><span>Choices</span></div>
       </div>
 
+      <div class="section-title">Difficulty</div>
       <div class="levels" id="levels">
         <button type="button" class="lvl active" data-level="easy">Easy</button>
         <button type="button" class="lvl" data-level="medium">Medium</button>
